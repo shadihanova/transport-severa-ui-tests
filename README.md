@@ -1,27 +1,101 @@
-//todo проверка togglebutton
-// 2. Проверяем, что изначально панель скрыта (кнопка без active)
-// Используем утверждение, что класс не содержит 'active'
-await expect(toggleButton).not.toHaveClass(/active/);
+# UI-тесты для портала "Транспорт Севера"
 
-// 3. Раскрываем панель (кликаем)
-await toggleButton.click();
+Этот репозиторий содержит набор автоматизированных E2E (end-to-end) тестов для веб-портала "Транспорт Севера". Тесты написаны с использованием [Playwright](https://playwright.dev/) на языке TypeScript.
 
-// 4. Проверяем, что появилась кнопка с классом active (панель раскрыта)
-await expect(toggleButton).toHaveClass(/active/);
+## 🚀 Быстрый старт
 
-// 5. Снова скрываем панель
-await toggleButton.click();
+### 1. Клонирование репозитория
 
-// 6. Проверяем, что active снова исчез
-await expect(toggleButton).not.toHaveClass(/active/);
+```bash
+git clone <URL вашего репозитория>
+cd transport-severa-ui-tests
+```
 
-//
+### 2. Установка зависимостей
 
-Запустить только публичные тесты без авторизации:
+Установите все необходимые пакеты, включая Playwright и его браузеры.
+
+```bash
+npm ci
+```
+
+### 3. Настройка окружения
+
+Для запуска тестов необходимо создать файл `.env` в корне проекта. Он будет содержать URL стенда и данные для авторизации.
+
+1.  Скопируйте файл `.env.example` в `.env`:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+2.  Откройте файл `.env` и заполните его актуальными данными:
+
+    ```dotenv
+    # URL тестового стенда
+    BASE_URL=https://xn--80aaflb9bhhgedfdgh.xn--p1ai/#/
+
+    # Данные для первого тестового пользователя
+    USER1_LOGIN=your_user1_login
+    USER1_PASSWORD=your_user1_password
+
+    # Данные для второго тестового пользователя
+    USER2_LOGIN=your_user2_login
+    USER2_PASSWORD=your_user2_password
+    ```
+
+## ⚙️ Запуск тестов
+
+### Все тесты
+
+Запускает все тесты для всех проектов, определённых в `playwright.config.ts`. Сначала выполняются setup-тесты для авторизации, затем основные.
+
+```bash
+npx playwright test
+```
+
+### Тесты в интерактивном UI-режиме
+
+Открывает специальный интерфейс Playwright для удобной отладки тестов.
+
+```bash
+npx playwright test --ui
+```
+
+### Запуск по проектам и тегам
+
+**Только публичные тесты (без авторизации):**
+
+```bash
 npx playwright test --project=chromium-no-auth
+```
 
-Запустить по тегу:
-npx playwright test --grep @no-auth --no-deps
+**Только тесты с авторизацией (от лица User 1):**
 
-Запустить тесты с логином:
+```bash
 npx playwright test --project=chromium-user1
+```
+
+**Запуск тестов по тегу (например, все гостевые тесты):**
+
+```bash
+npx playwright test --grep @no-auth
+```
+
+## 📊 Отчеты
+
+После каждого прогона тестов в корне проекта создается папка `playwright-report`. Чтобы посмотреть детальный HTML-отчет, откройте файл `playwright-report/index.html` в браузере.
+
+```bash
+npx playwright show-report
+```
+
+## 📂 Структура проекта
+
+- `tests/` — Основная директория с тестами и вспомогательными файлами.
+- `tests/tests/` — Содержит файлы с тест-кейсами (`*.test.ts`).
+- `tests/pages/` — Page Object классы для инкапсуляции логики взаимодействия со страницами.
+- `tests/data/` — Хранилище тестовых данных (пользователи, константы).
+- `setup/` — Содержит тесты для предварительной настройки, например, для авторизации и сохранения сессии.
+- `playwright.config.ts` — Главный конфигурационный файл Playwright.
+- `.github/workflows/` — Настройки для запуска тестов в CI/CD (GitHub Actions).

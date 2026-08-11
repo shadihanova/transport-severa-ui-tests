@@ -43,14 +43,14 @@ test.describe('Главная страница и карта', () => {
       await expect(mapPage.menuPolls).toBeVisible();
       await expect(mapPage.menuAbout).toBeVisible();
       await expect(mapPage.menuAuthorizeBtn).toBeVisible();
-      await expect(await mapPage.getMenuFooterText()).toEqual(UI_TEXTS.footerCopyright);
+      expect(await mapPage.getMenuFooterText()).toEqual(UI_TEXTS.footerCopyright);
     });
 
     await test.step('Шаг 2. Закрыть боковое меню', async () => {
       await mapPage.closeMenuBtn.click();
       await expect(mapPage.sideMenu).toBeHidden();
     });
-    
+
     await test.step('Шаг 3. Развернуть левую панель и проверить содержимое', async () => {
       await mapPage.toggleButton.click();
       await expect(mapPage.leftPanel).toBeVisible();
