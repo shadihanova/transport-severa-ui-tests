@@ -22,6 +22,7 @@ export default defineConfig({
     viewport: { width: 1920, height: 1080 },
     launchOptions: {
       args: ['--start-maximized'],
+      slowMo: 1000,
     },
     headless: false, // Показывать браузер при прогоне=false или нет=true
     trace: 'on-first-retry',

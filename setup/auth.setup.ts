@@ -1,3 +1,4 @@
+/* eslint-disable playwright/expect-expect */
 import { test as setup } from '@playwright/test';
 import { USERS, AUTH_STORAGE_PATHS } from '../tests/data/users';
 import { LoginPage } from '../tests/pages';

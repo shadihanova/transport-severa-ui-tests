@@ -36,7 +36,8 @@ export class BasePage {
 
   readonly leftPanel: Locator;
 
-  readonly flash: Locator;
+  readonly flashSuccess: Locator;
+  readonly flashError: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -83,7 +84,8 @@ export class BasePage {
     this.leftPanel = page.locator('.sidebar');
 
     // Flash
-    this.flash = page.locator('.toast, .notification, [role="alert"]');
+    this.flashSuccess = page.locator('.flash.success');
+    this.flashError = page.locator('.flash.error');
   }
 
   /**
@@ -99,7 +101,6 @@ export class BasePage {
    */
   async getMenuFooterText(): Promise<string | null> {
     const text = await this.sideMenuFooter.textContent();
-    // Нормализуем текст: убираем пробелы по краям и заменяем множественные пробелы на один
     return text ? text.trim().replace(/\s+/g, ' ') : null;
   }
 }
