@@ -5,13 +5,18 @@ import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 // Берем URL из файла .env. Если вдруг файла нет, падаем на запасной URL
-const BASE_URL = process.env.BASE_URL || 'https://xn--80aaflb9bhhgedfdgh.xn--p1ai/#/';
+const BASE_URL = process.env.BASE_URL || '';
 
 export default defineConfig({
   testDir: './tests/tests',
   timeout: 25000,
   fullyParallel: false,
   maxFailures: 1,
+
+  expect: {
+    timeout: 10000, // таймаут для всех expect(...) до 10 секунд (10000 мс)
+  },
+
   reporter: [
     ['list'], // Подробный красивый список со временем выполнения каждого теста
     ['html', { open: 'never' }], // Чтобы параллельно генерировался и HTML-отчет
@@ -22,7 +27,7 @@ export default defineConfig({
     viewport: { width: 1920, height: 1080 },
     launchOptions: {
       args: ['--start-maximized'],
-      slowMo: 1000,
+    //  slowMo: 800,
     },
     headless: false, // Показывать браузер при прогоне=false или нет=true
     trace: 'on-first-retry',

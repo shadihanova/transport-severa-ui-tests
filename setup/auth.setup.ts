@@ -1,5 +1,4 @@
-/* eslint-disable playwright/expect-expect */
-import { test as setup } from '@playwright/test';
+import { expect, test as setup } from '@playwright/test';
 import { USERS, AUTH_STORAGE_PATHS } from '../tests/data/users';
 import { LoginPage } from '../tests/pages';
 
@@ -8,14 +7,14 @@ setup('Авторизация user-1 и сохранение сессии', asyn
   const loginPage = new LoginPage(page);
 
   await loginPage.goto();
+  await loginPage.menuButton.click();
+  await loginPage.menuAuthorizeButton.click();
+  await expect(loginPage.loginModal).toBeVisible();
 
   // Логинимся кредами USER 1 из .env
-  await loginPage.login(USERS.user1.username, USERS.user1.password);
+  await loginPage.login(USERS.user1.email, USERS.user1.password);
+  await expect(loginPage.getMenuProfileButton('Иван Иванов')).toBeVisible();
 
-  // TODO: Раскомментировать/уточнить проверку после готовности авторизации
-  // await expect(page.getByTestId('user-profile')).toBeVisible();
-
-  // Сохраняем стейт первого пользователя
   await page.context().storageState({ path: AUTH_STORAGE_PATHS.user1 });
 });
 
@@ -24,13 +23,13 @@ setup('Авторизация user-2 и сохранение сессии', asyn
   const loginPage = new LoginPage(page);
 
   await loginPage.goto();
+  await loginPage.menuButton.click();
+  await loginPage.menuAuthorizeButton.click();
+  await expect(loginPage.loginModal).toBeVisible();
 
   // Логинимся кредами USER 2 из .env
-  await loginPage.login(USERS.user2.username, USERS.user2.password);
+  await loginPage.login(USERS.user2.email, USERS.user2.password);
+  await expect(loginPage.getMenuProfileButton('Петр Петров')).toBeVisible();
 
-  // TODO: Раскомментировать/уточнить проверку
-  // await expect(page.getByTestId('user-profile')).toBeVisible();
-
-  // Сохраняем стейт второго пользователя
   await page.context().storageState({ path: AUTH_STORAGE_PATHS.user2 });
 });

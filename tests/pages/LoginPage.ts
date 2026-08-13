@@ -3,10 +3,14 @@ import { BasePage } from './BasePage';
 import { UserForRegistration, VALID_USER } from '../data/consts';
 
 export class LoginPage extends BasePage {
-  readonly emailInput: Locator;
-  readonly passwordInput: Locator;
-  readonly submitButton: Locator;
-
+  readonly loginModal: Locator;
+  readonly loginModalTitle: Locator;
+  readonly loginWithYandexBtn: Locator;
+  readonly loginWithVkBtn: Locator;
+  readonly authEmailInput: Locator;
+  readonly authPasswordInput: Locator;
+  readonly rememberMeCheckbox: Locator;
+  readonly submitLoginButton: Locator;
   readonly makeAccountButton: Locator;
 
   readonly registrationModal: Locator;
@@ -15,7 +19,6 @@ export class LoginPage extends BasePage {
   readonly regEmailInput: Locator;
   readonly regPasswordInput: Locator;
   readonly regPasswordConfirmInput: Locator;
-
   readonly regNameGroupWithError: Locator;
   readonly regSurnameGroupWithError: Locator;
   readonly regEmailGroupWithError: Locator;
@@ -26,11 +29,14 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-
-    this.emailInput = page.getByRole('textbox', { name: 'Электронная почта' });
-    this.passwordInput = page.getByRole('textbox', { name: 'Пароль' });
-    this.submitButton = page.getByRole('button', { name: 'Войти' });
-
+    this.loginModal = page.locator('.t-modal:has(.t-modal__title:text-is("Вход"))');
+    this.loginModalTitle = this.loginModal.locator('.t-modal__title');
+    this.loginWithYandexBtn = this.loginModal.getByRole('button', { name: 'Я Яндекс' });
+    this.loginWithVkBtn = this.loginModal.getByRole('button', { name: 'VK ВКонтакте' });
+    this.authEmailInput = page.getByRole('textbox', { name: 'Электронная почта' });
+    this.authPasswordInput = page.getByRole('textbox', { name: 'Пароль' });
+    this.rememberMeCheckbox = page.getByRole('checkbox', { name: 'Оставаться в системе' });
+    this.submitLoginButton = page.getByRole('button', { name: 'Войти' });
     this.makeAccountButton = page.getByText('Зарегистрируйтесь');
 
     this.registrationModal = page.getByText('Регистрация');
@@ -39,7 +45,6 @@ export class LoginPage extends BasePage {
     this.regEmailInput = page.getByRole('textbox', { name: 'Электронная почта *' });
     this.regPasswordInput = page.getByRole('textbox', { name: 'Пароль *' });
     this.regPasswordConfirmInput = page.getByRole('textbox', { name: 'Подтверждение пароля *' });
-
     this.regNameGroupWithError = page.locator('.t-input-group.t-input-group_error').filter({ hasText: 'Имя' });
     this.regSurnameGroupWithError = page.locator('.t-input-group.t-input-group_error').filter({ hasText: 'Фамилия' });
     this.regEmailGroupWithError = page.locator('.t-input-group_error').filter({ hasText: 'Электронная почта' });
@@ -50,7 +55,7 @@ export class LoginPage extends BasePage {
   }
 
   async goto(): Promise<void> {
-    await this.navigate('/login');
+    await this.navigate('');
   }
 
   /**
@@ -70,14 +75,38 @@ export class LoginPage extends BasePage {
   }
 
   /**
+   * Возвращает массив ключевых локаторов формы входа.
+   * Используется для массовой проверки видимости.
+   */
+  get loginFormElements(): Locator[] {
+    return [
+      this.loginModal,
+      this.loginWithYandexBtn,
+      this.loginWithVkBtn,
+      this.authEmailInput,
+      this.authPasswordInput,
+      this.rememberMeCheckbox,
+      this.submitLoginButton,
+      this.makeAccountButton,
+    ];
+  }
+
+  /**
+   * Возвращает локатор профиля
+   */
+  getMenuProfileButton(userName: string): Locator {
+    return this.menuList.getByRole('button', { name: userName });
+  }
+
+  /**
    * Бизнес-метод выполнения авторизации
    */
-  async login(username: string, password?: string): Promise<void> {
-    await this.emailInput.fill(username);
+  async login(email: string, password?: string): Promise<void> {
+    await this.authEmailInput.fill(email);
     if (password) {
-      await this.passwordInput.fill(password);
+      await this.authPasswordInput.fill(password);
     }
-    await this.submitButton.click();
+    await this.submitLoginButton.click();
   }
 
   /**

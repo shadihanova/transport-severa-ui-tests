@@ -1,18 +1,24 @@
 export interface UserCredentials {
-  username: string;
+  name?: string;
+  surname?: string;
+  email: string;
   password?: string;
 }
 
-export const USERS = {
+export const USERS: Record<string, UserCredentials> = {
   user1: {
-    username: process.env.USER1_LOGIN || 'user_1',
-    password: process.env.USER1_PASSWORD || 'default_pass_1',
+    name: 'Иван',
+    surname: 'Иванов',
+    email: process.env.USER1_EMAIL || 'user1@test.ru',
+    password: process.env.USER1_PASSWORD || 'password1',
   },
   user2: {
-    username: process.env.USER2_LOGIN || 'user_2',
-    password: process.env.USER2_PASSWORD || 'default_pass_2',
+    name: 'Петр',
+    surname: 'Петров',
+    email: process.env.USER2_EMAIL || 'user2@test.ru',
+    password: process.env.USER2_PASSWORD || 'password2',
   },
-} as const;
+};
 
 export const AUTH_STORAGE_PATHS = {
   user1: 'setup/.auth/user1.json',

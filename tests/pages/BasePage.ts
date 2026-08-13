@@ -31,7 +31,8 @@ export class BasePage {
   readonly menuPolls: Locator;
   readonly menuAbout: Locator;
   readonly menuGuide: Locator;
-  readonly menuAuthorizeBtn: Locator;
+  readonly menuAuthorizeButton: Locator;
+  readonly menuLogoutButton: Locator;
   readonly sideMenuFooter: Locator;
 
   readonly leftPanel: Locator;
@@ -64,10 +65,11 @@ export class BasePage {
     this.sideMenu = page.locator('.menu');
 
     this.sideMenuHeader = this.sideMenu.locator('.menu__header');
+    this.sideMenuBody = this.sideMenu.locator('.menu__body');
+    this.sideMenuFooter = this.sideMenu.locator('.menu__footer');
+
     this.closeMenuBtn = this.sideMenuHeader.getByTitle('Закрыть');
     this.logoImage = this.sideMenuHeader.getByRole('img', { name: 'NorthTransport' });
-
-    this.sideMenuBody = this.sideMenu.locator('.menu__body');
     this.menuList = this.sideMenuBody.locator('.menu-list');
     this.menuRoutes = this.menuList.getByRole('button', { name: 'Маршруты' });
     this.menuStops = this.menuList.getByRole('button', { name: 'Остановки' });
@@ -76,9 +78,8 @@ export class BasePage {
     this.menuPolls = this.menuList.getByRole('button', { name: 'Опросы' });
     this.menuAbout = this.menuList.getByRole('button', { name: 'Справка' });
     this.menuGuide = this.menuList.getByRole('button', { name: 'Гид по порталу' });
-    this.menuAuthorizeBtn = this.menuList.getByRole('button', { name: 'Вход' });
-
-    this.sideMenuFooter = this.sideMenu.locator('.menu__footer');
+    this.menuAuthorizeButton = this.menuList.getByRole('button', { name: 'Вход' });
+    this.menuLogoutButton = this.menuList.getByRole('button', { name: 'Выход' });
 
     // Левая панель
     this.leftPanel = page.locator('.sidebar');
