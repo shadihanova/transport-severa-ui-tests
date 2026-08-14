@@ -121,7 +121,7 @@ export default class TmsReporter implements Reporter {
     if (this.pending.length) {
       await Promise.allSettled(this.pending);
     }
-    
+
     // Выводим итоговую строку только если что-то реально отправилось
     if (this.sentCount > 0) {
       console.log(`\n✅ Статусы по тестам плана [${this.planId}] отправлены в TMS (успешно обновлено ${this.sentCount} записей).\n`);

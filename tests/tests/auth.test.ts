@@ -165,42 +165,46 @@ test.describe('Авторизация и регистрация', () => {
     });
   });
 
-  test('5. Сохранение авторизационной сессии через чекбокс «Оставаться в системе» [TESTY-1136]', { tag: ['@no-auth'] }, async ({ page, browser }) => {
-    await test.step('1. Ввод данных и активация чекбокса «Оставаться в системе»', async () => {
-      await loginPage.menuButton.click();
-      await loginPage.menuAuthorizeButton.click();
-      await loginPage.authEmailInput.fill(USERS.user1.email);
-      await loginPage.authPasswordInput.fill(USERS.user1.password!);
-      await loginPage.rememberMeCheckbox.check();
-      await expect(loginPage.rememberMeCheckbox).toBeChecked();
-    });
+  test(
+    '5. Сохранение авторизационной сессии через чекбокс «Оставаться в системе» [TESTY-1136]',
+    { tag: ['@no-auth'] },
+    async ({ page, browser }) => {
+      await test.step('1. Ввод данных и активация чекбокса «Оставаться в системе»', async () => {
+        await loginPage.menuButton.click();
+        await loginPage.menuAuthorizeButton.click();
+        await loginPage.authEmailInput.fill(USERS.user1.email);
+        await loginPage.authPasswordInput.fill(USERS.user1.password!);
+        await loginPage.rememberMeCheckbox.check();
+        await expect(loginPage.rememberMeCheckbox).toBeChecked();
+      });
 
-    await test.step('2. Авторизация', async () => {
-      await loginPage.submitLoginButton.click();
-      await expect(loginPage.menuLogoutButton).toBeVisible();
-    });
+      await test.step('2. Авторизация', async () => {
+        await loginPage.submitLoginButton.click();
+        await expect(loginPage.menuLogoutButton).toBeVisible();
+      });
 
-    await test.step('3. Имитация закрытия браузера и проверка сохранения сессии', async () => {
-      // 1. Вытаскиваем сохраненные данные (localStorage и куки) из текущей сессии
-      const state = await page.context().storageState();
+      await test.step('3. Имитация закрытия браузера и проверка сохранения сессии', async () => {
+        // 1. Вытаскиваем сохраненные данные (localStorage и куки) из текущей сессии
+        const state = await page.context().storageState();
 
-      // 2. Создаем НОВЫЙ контекст и ПЕРЕДАЕМ ЕМУ эти данные
-      const newContext = await browser.newContext({ storageState: state });
-      const newPage = await newContext.newPage();
-      const newLoginPage = new LoginPage(newPage);
+        // 2. Создаем НОВЫЙ контекст и ПЕРЕДАЕМ ЕМУ эти данные
+        const newContext = await browser.newContext({ storageState: state });
+        const newPage = await newContext.newPage();
+        const newLoginPage = new LoginPage(newPage);
 
-      await newLoginPage.goto();
+        await newLoginPage.goto();
 
-      // Проверяем, что сессия СОХРАНИЛАСЬ
-      await newLoginPage.menuButton.click();
-      const fullName = `${USERS.user1.name} ${USERS.user1.surname}`;
-      await expect(newLoginPage.getMenuProfileButton(fullName)).toBeVisible();
-      await expect(newLoginPage.menuLogoutButton).toBeVisible();
+        // Проверяем, что сессия СОХРАНИЛАСЬ
+        await newLoginPage.menuButton.click();
+        const fullName = `${USERS.user1.name} ${USERS.user1.surname}`;
+        await expect(newLoginPage.getMenuProfileButton(fullName)).toBeVisible();
+        await expect(newLoginPage.menuLogoutButton).toBeVisible();
 
-      // Закрываем контекст за собой
-      await newContext.close();
-    });
-  });
+        // Закрываем контекст за собой
+        await newContext.close();
+      });
+    },
+  );
 
   test('8 Успешный выход из системы (Logout) [TESTY-1139]', { tag: ['@auth'] }, async () => {
     await test.step('1. Выход и проверка состояния профиля', async () => {

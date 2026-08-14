@@ -7,7 +7,7 @@ const reporters: ReporterDescription[] = [['list']];
 
 // 2. Если запустили через npm run test:tms, добавляем наш TMS-репортер
 if (process.env.TMS_SYNC === 'true') {
-  reporters.push(['./scripts/tms-reporter.ts']); 
+  reporters.push(['./scripts/tms-reporter.ts']);
 }
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
@@ -38,7 +38,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
 
-    projects: [
+  projects: [
     // 1. Setup проект (выполняется первым и создает файлы авторизации для двух юзеров)
     {
       name: 'setup',
@@ -60,7 +60,7 @@ export default defineConfig({
     {
       name: 'chromium-user1',
       // Игнорирует публичные тесты и тесты, специфичные только для юзера 2
-      grepInvert: /@no-auth|@user2/, 
+      grepInvert: /@no-auth|@user2/,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'setup/.auth/user1.json',
