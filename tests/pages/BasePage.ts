@@ -3,21 +3,13 @@ import { Page, Locator } from '@playwright/test';
 export class BasePage {
   readonly page: Page;
 
-  readonly mapCanvas: Locator;
-
+  // Верхние элементы
   readonly searchInput: Locator;
   readonly menuButton: Locator;
   readonly routeButton: Locator;
   readonly toggleButton: Locator;
 
-  readonly zoomInButton: Locator;
-  readonly zoomOutButton: Locator;
-  readonly myLocationButton: Locator;
-  readonly accessibleCheckbox: Locator;
-  readonly stopsCheckbox: Locator;
-  readonly closuresCheckbox: Locator;
-  readonly roadsCheckbox: Locator;
-
+  // Меню
   readonly sideMenu: Locator;
   readonly sideMenuHeader: Locator;
   readonly closeMenuBtn: Locator;
@@ -35,16 +27,12 @@ export class BasePage {
   readonly menuLogoutButton: Locator;
   readonly sideMenuFooter: Locator;
 
-  readonly leftPanel: Locator;
-
+  // Всплывающие сообщения
   readonly flashSuccess: Locator;
   readonly flashError: Locator;
 
   constructor(page: Page) {
     this.page = page;
-
-    // Карта
-    this.mapCanvas = page.getByRole('region', { name: 'Map' });
 
     // Верхние элементы
     this.searchInput = page.getByRole('textbox', { name: 'Остановки и маршруты' });
@@ -52,22 +40,11 @@ export class BasePage {
     this.routeButton = page.getByRole('button', { name: 'route' });
     this.toggleButton = page.locator('button.t-btn_toggle');
 
-    // Нижние элементы
-    this.zoomInButton = page.getByRole('button', { name: 'Zoom in' });
-    this.zoomOutButton = page.getByRole('button', { name: 'Zoom out' });
-    this.myLocationButton = page.getByRole('button', { name: 'Find my location' });
-    this.accessibleCheckbox = page.getByTitle('Отобразить транспорт для маломобильных групп населения');
-    this.stopsCheckbox = page.getByTitle('Отобразить остановочные пункты');
-    this.closuresCheckbox = page.getByTitle('Отобразить перекрытия дорог');
-    this.roadsCheckbox = page.getByTitle('Отобразить дороги');
-
     // Меню
     this.sideMenu = page.locator('.menu');
-
     this.sideMenuHeader = this.sideMenu.locator('.menu__header');
     this.sideMenuBody = this.sideMenu.locator('.menu__body');
     this.sideMenuFooter = this.sideMenu.locator('.menu__footer');
-
     this.closeMenuBtn = this.sideMenuHeader.getByTitle('Закрыть');
     this.logoImage = this.sideMenuHeader.getByRole('img', { name: 'NorthTransport' });
     this.menuList = this.sideMenuBody.locator('.menu-list');
@@ -81,10 +58,7 @@ export class BasePage {
     this.menuAuthorizeButton = this.menuList.getByRole('button', { name: 'Вход' });
     this.menuLogoutButton = this.menuList.getByRole('button', { name: 'Выход' });
 
-    // Левая панель
-    this.leftPanel = page.locator('.sidebar');
-
-    // Flash
+    // Всплывающие сообщения
     this.flashSuccess = page.locator('.flash.success');
     this.flashError = page.locator('.flash.error');
   }
