@@ -1,10 +1,17 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, ReporterDescription } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 
+// 1. Собираем базовые репортеры (они работают всегда)
+const reporters: ReporterDescription[] = [['list']];
+
+// 2. Если запустили через npm run test:tms, добавляем наш TMS-репортер
+if (process.env.TMS_SYNC === 'true') {
+  reporters.push(['./scripts/tms-reporter.ts']); 
+}
+
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-// Берем URL из файла .env. Если вдруг файла нет, падаем на запасной URL
 const BASE_URL = process.env.BASE_URL || '';
 
 export default defineConfig({
@@ -14,27 +21,24 @@ export default defineConfig({
   maxFailures: 1,
 
   expect: {
-    timeout: 10000, // таймаут для всех expect(...) до 10 секунд (10000 мс)
+    timeout: 10000, // таймаут для всех expect(...) до 10 секунд (10000 мс). оставить потому что ждем исчезновения flash-ей
   },
 
-  reporter: [
-    ['list'], // Подробный красивый список со временем выполнения каждого теста
-    ['html', { open: 'never' }], // Чтобы параллельно генерировался и HTML-отчет
-  ],
+  reporter: reporters, // Передаем собранный массив сюда
 
   use: {
     baseURL: BASE_URL,
     viewport: { width: 1920, height: 1080 },
     launchOptions: {
       args: ['--start-maximized'],
-    //  slowMo: 800,
+      //  slowMo: 800,
     },
     headless: false, // Показывать браузер при прогоне=false или нет=true
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
 
-  projects: [
+    projects: [
     // 1. Setup проект (выполняется первым и создает файлы авторизации для двух юзеров)
     {
       name: 'setup',
@@ -52,10 +56,11 @@ export default defineConfig({
       },
     },
 
-    // 3. Проект для авторизованного юзера (пропускает тесты с @no-auth)
+    // 3. Проект для авторизованного юзера 1 (основные тесты)
     {
       name: 'chromium-user1',
-      grepInvert: /@no-auth/, // Игнорирует публичные тесты
+      // Игнорирует публичные тесты и тесты, специфичные только для юзера 2
+      grepInvert: /@no-auth|@user2/, 
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'setup/.auth/user1.json',
@@ -63,10 +68,10 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
-    // 4. Прогон тестов от лица USER 2
+    // 4. Прогон тестов от лица USER 2 (только специфичные тесты!)
     {
       name: 'chromium-user2',
-      grepInvert: /@no-auth/, // Игнорирует публичные тесты
+      grep: /@user2/, // <--- Запускает ТОЛЬКО тесты с тегом @user2
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'setup/.auth/user2.json',

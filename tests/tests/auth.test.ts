@@ -14,7 +14,7 @@ test.describe('Авторизация и регистрация', () => {
   });
 
   test(
-    '1. Валидация полей формы регистрации: Проверка обязательности полей и подсветок невалидных данных',
+    '1. Валидация полей формы регистрации: Проверка обязательности полей и подсветок невалидных данных [TESTY-1132]',
     { tag: ['@no-auth'] },
     async () => {
       await test.step('0. Открытие формы регистрации', async () => {
@@ -70,7 +70,7 @@ test.describe('Авторизация и регистрация', () => {
     },
   );
 
-  test('2. Позитивная регистрация нового пользователя с автозаполнением формы входа', { tag: ['@no-auth'] }, async () => {
+  test('2. Позитивная регистрация нового пользователя с автозаполнением формы входа [TESTY-1133]', { tag: ['@no-auth'] }, async () => {
     const testUser = VALID_USER;
 
     await test.step('0. Открытие формы регистрации', async () => {
@@ -123,7 +123,7 @@ test.describe('Авторизация и регистрация', () => {
     // });
   });
 
-  test('3. Негативный вход в систему с неверным паролем/email', { tag: ['@no-auth'] }, async () => {
+  test('3. Негативный вход в систему с неверным паролем/email [TESTY-1134]', { tag: ['@no-auth'] }, async () => {
     await test.step('1. Заполнение формы входа невалидным паролем и существующим Email', async () => {
       await loginPage.menuButton.click();
       await loginPage.menuAuthorizeButton.click();
@@ -145,7 +145,7 @@ test.describe('Авторизация и регистрация', () => {
     });
   });
 
-  test('4. Успешная авторизация пользователя по Email и паролю', { tag: ['@no-auth'] }, async () => {
+  test('4. Успешная авторизация пользователя по Email и паролю [TESTY-1135]', { tag: ['@no-auth'] }, async () => {
     await test.step('1. Заполнение формы входа зарегистрированным пользователем', async () => {
       await loginPage.menuButton.click();
       await loginPage.menuAuthorizeButton.click();
@@ -165,7 +165,7 @@ test.describe('Авторизация и регистрация', () => {
     });
   });
 
-  test('5. Сохранение авторизационной сессии через чекбокс «Оставаться в системе»', { tag: ['@no-auth'] }, async ({ page, browser }) => {
+  test('5. Сохранение авторизационной сессии через чекбокс «Оставаться в системе» [TESTY-1136]', { tag: ['@no-auth'] }, async ({ page, browser }) => {
     await test.step('1. Ввод данных и активация чекбокса «Оставаться в системе»', async () => {
       await loginPage.menuButton.click();
       await loginPage.menuAuthorizeButton.click();
@@ -202,7 +202,7 @@ test.describe('Авторизация и регистрация', () => {
     });
   });
 
-  test('8 Успешный выход из системы (Logout)', { tag: ['@auth'] }, async () => {
+  test('8 Успешный выход из системы (Logout) [TESTY-1139]', { tag: ['@auth'] }, async () => {
     await test.step('1. Выход и проверка состояния профиля', async () => {
       await loginPage.menuButton.click();
       await expect(loginPage.menuLogoutButton).toBeVisible();
@@ -214,7 +214,8 @@ test.describe('Авторизация и регистрация', () => {
     });
   });
 
-  // test('9. Разрыв авторизационной сессии без чекбокса «Оставаться в системе»', { tag: ['@no-auth'] }, async ({ page, browser }) => {
+  // не работает потому что баг
+  // test('9. Разрыв авторизационной сессии без чекбокса «Оставаться в системе» [TESTY-1140]', { tag: ['@no-auth'] }, async ({ page, browser }) => {
   //   await test.step('1. Ввод данных без активации чекбокса', async () => {
   //     await loginPage.menuButton.click();
   //     await loginPage.menuAuthorizeButton.click();
@@ -249,4 +250,27 @@ test.describe('Авторизация и регистрация', () => {
   //     await newContext.close();
   //   });
   // });
+
+  test('10. Регистрация с уже зарегистрированным Email [TESTY-1141]', { tag: ['@no-auth'] }, async () => {
+    await test.step('0. Открытие формы регистрации', async () => {
+      await loginPage.menuButton.click();
+      await loginPage.menuAuthorizeButton.click();
+      await expect(loginPage.loginModal).toBeVisible();
+      await loginPage.makeAccountButton.click();
+    });
+
+    await test.step('1. Заполнение формы существующим Email', async () => {
+      // Берем базового юзера, но перезаписываем email на уже занятый
+      const duplicateUser = { ...VALID_USER, email: USERS.user1.email! };
+      await loginPage.fillRegisterForm(duplicateUser);
+    });
+
+    await test.step('2. Нажать кнопку «Зарегистрироваться»', async () => {
+      await loginPage.submitRegistrationButton.click();
+      await expect(loginPage.flashError).toBeVisible();
+      await expect(loginPage.flashError).toContainText(ERROR_MESSAGES.emailAlreadyInUse);
+      await expect(loginPage.flashError).toBeHidden();
+      await expect(loginPage.registrationModal).toBeVisible();
+    });
+  });
 });

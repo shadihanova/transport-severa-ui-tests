@@ -1,7 +1,7 @@
 export const ERROR_MESSAGES = {
   invalidCredentials: 'Ошибка входа. Неверный E-mail или пароль',
   invalidRegistration: 'Проверьте правильность заполнения полей',
-  // userNotFound: 'Пользователь не найден',
+  emailAlreadyInUse: 'Ошибка регистрации',
   // networkError: 'Ошибка соединения с сервером',
 } as const;
 

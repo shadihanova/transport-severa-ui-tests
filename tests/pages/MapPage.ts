@@ -10,6 +10,6 @@ export class MapPage extends BasePage {
    * Переход на главную страницу с картой
    */
   async goto(): Promise<void> {
-    await this.navigate('/');
+    await this.navigate('');
   }
 }
