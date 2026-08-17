@@ -6,7 +6,7 @@ import { LoginPage } from '../tests/pages';
 setup('Авторизация user-1 и сохранение сессии', async ({ page }) => {
   const loginPage = new LoginPage(page);
 
-  await loginPage.goto();
+  await loginPage.open();
   await loginPage.menuButton.click();
   await loginPage.menuAuthorizeButton.click();
   await expect(loginPage.loginModal).toBeVisible();
@@ -22,7 +22,7 @@ setup('Авторизация user-1 и сохранение сессии', asyn
 setup('Авторизация user-2 и сохранение сессии', async ({ page }) => {
   const loginPage = new LoginPage(page);
 
-  await loginPage.goto();
+  await loginPage.open();
   await loginPage.menuButton.click();
   await loginPage.menuAuthorizeButton.click();
   await expect(loginPage.loginModal).toBeVisible();
