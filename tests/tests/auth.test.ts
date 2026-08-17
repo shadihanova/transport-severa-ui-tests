@@ -40,28 +40,32 @@ test.describe('Авторизация и регистрация', () => {
       });
 
       await test.step('2. Ввести в поле "Имя" невалидные значения', async () => {
-        for (const name of INVALID_REGISTRATION_DATA.names) { // <--- ИСПРАВЛЕНО
+        for (const name of INVALID_REGISTRATION_DATA.names) {
+          // <--- ИСПРАВЛЕНО
           await loginPage.regNameInput.fill(name);
           await expect.soft(loginPage.regNameGroupWithError).toBeVisible();
         }
       });
 
       await test.step('3. Ввести в поле "Фамилия" невалидные значения', async () => {
-        for (const surname of INVALID_REGISTRATION_DATA.names) { // <--- ИСПРАВЛЕНО
+        for (const surname of INVALID_REGISTRATION_DATA.names) {
+          // <--- ИСПРАВЛЕНО
           await loginPage.regSurnameInput.fill(surname);
           await expect.soft(loginPage.regSurnameGroupWithError).toBeVisible();
         }
       });
 
       await test.step('4. Ввести в поле "Email" невалидные значения', async () => {
-        for (const email of INVALID_REGISTRATION_DATA.emails) { // <--- ИСПРАВЛЕНО
+        for (const email of INVALID_REGISTRATION_DATA.emails) {
+          // <--- ИСПРАВЛЕНО
           await loginPage.regEmailInput.fill(email);
           await expect.soft(loginPage.regEmailGroupWithError).toBeVisible();
         }
       });
 
       await test.step('5. Ввести в поле "Пароль" невалидные значения', async () => {
-        for (const password of INVALID_REGISTRATION_DATA.passwords) { // <--- ИСПРАВЛЕНО
+        for (const password of INVALID_REGISTRATION_DATA.passwords) {
+          // <--- ИСПРАВЛЕНО
           await loginPage.regPasswordInput.fill(password);
           await expect.soft(loginPage.regPasswordGroupWithError).toBeVisible();
         }
@@ -69,7 +73,7 @@ test.describe('Авторизация и регистрация', () => {
     },
   );
 
-   test('2. Позитивная регистрация нового пользователя с автозаполнением формы входа [TESTY-1133]', { tag: ['@no-auth'] }, async () => {
+  test('2. Позитивная регистрация нового пользователя с автозаполнением формы входа [TESTY-1133]', { tag: ['@no-auth'] }, async () => {
     const testUser = VALID_USER;
 
     await test.step('0. Открытие формы регистрации', async () => {
@@ -126,7 +130,7 @@ test.describe('Авторизация и регистрация', () => {
       await loginPage.menuButton.click();
       await loginPage.menuAuthorizeButton.click();
       await loginPage.login(USERS.user1.email, 'WrongPassword123!');
-      
+
       await expect(loginPage.flashError).toBeVisible();
       await expect(loginPage.flashError).toContainText(ERROR_MESSAGES.invalidCredentials);
       await expect(loginPage.flashError).toBeHidden();
@@ -134,7 +138,7 @@ test.describe('Авторизация и регистрация', () => {
 
     await test.step('2. Заполнение формы входа незарегистрированным Email', async () => {
       await loginPage.login('WrongEmail123@test.ru', USERS.user1.password!);
-      
+
       await expect(loginPage.flashError).toBeVisible();
       await expect(loginPage.flashError).toContainText(ERROR_MESSAGES.invalidCredentials);
       await expect(loginPage.flashError).toBeHidden();
