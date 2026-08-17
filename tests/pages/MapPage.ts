@@ -9,7 +9,7 @@ export class MapPage extends BasePage {
   readonly zoomInButton: Locator;
   readonly zoomOutButton: Locator;
   readonly myLocationButton: Locator;
-  
+
   // Чекбоксы слоев
   readonly accessibleCheckbox: Locator;
   readonly stopsCheckbox: Locator;
@@ -18,7 +18,7 @@ export class MapPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    
+
     // Карта
     this.mapCanvas = page.getByRole('region', { name: 'Map' });
 
@@ -26,7 +26,7 @@ export class MapPage extends BasePage {
     this.zoomInButton = page.getByRole('button', { name: 'Zoom in' });
     this.zoomOutButton = page.getByRole('button', { name: 'Zoom out' });
     this.myLocationButton = page.getByRole('button', { name: 'Find my location' });
-    
+
     // Элементы нижней панели (Слои)
     this.accessibleCheckbox = page.getByTitle('Отобразить транспорт для маломобильных групп населения');
     this.stopsCheckbox = page.getByTitle('Отобразить остановочные пункты');

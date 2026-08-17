@@ -10,7 +10,7 @@ function getRandomString(length: number): string {
 
 // Главная функция: собирает email по маске
 export function generateRandomEmail(): string {
-  const timestamp = Date.now().toString().slice(-5); 
+  const timestamp = Date.now().toString().slice(-5);
   const username = getRandomString(4);
   const domain = getRandomString(3);
   const tld = getRandomString(2);

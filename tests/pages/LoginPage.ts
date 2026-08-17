@@ -34,13 +34,13 @@ export class LoginPage extends BasePage {
     super(page);
 
     // --- Окно авторизации ---
-    // Используем :has() и text-is для точного поиска модалки входа, 
+    // Используем :has() и text-is для точного поиска модалки входа,
     // чтобы не пересечься с модалкой регистрации
     this.loginModal = page.locator('.t-modal:has(.t-modal__title:text-is("Вход"))');
     this.loginModalTitle = this.loginModal.locator('.t-modal__title');
     this.loginWithYandexBtn = this.loginModal.getByRole('button', { name: 'Я Яндекс' });
     this.loginWithVkBtn = this.loginModal.getByRole('button', { name: 'VK ВКонтакте' });
-    
+
     this.authEmailInput = page.getByRole('textbox', { name: 'Электронная почта' });
     this.authPasswordInput = page.getByRole('textbox', { name: 'Пароль' });
     this.rememberMeCheckbox = page.getByRole('checkbox', { name: 'Оставаться в системе' });
@@ -54,9 +54,9 @@ export class LoginPage extends BasePage {
     this.regEmailInput = page.getByRole('textbox', { name: 'Электронная почта *' });
     this.regPasswordInput = page.getByRole('textbox', { name: 'Пароль *' });
     this.regPasswordConfirmInput = page.getByRole('textbox', { name: 'Подтверждение пароля *' });
-    
+
     // --- Группы полей с ошибками ---
-    // Отличный подход: фильтруем по тексту внутри блока с ошибкой, 
+    // Отличный подход: фильтруем по тексту внутри блока с ошибкой,
     // чтобы гарантированно проверить подсветку именно нужного поля
     this.regNameGroupWithError = page.locator('.t-input-group.t-input-group_error').filter({ hasText: 'Имя' });
     this.regSurnameGroupWithError = page.locator('.t-input-group.t-input-group_error').filter({ hasText: 'Фамилия' });
@@ -125,7 +125,7 @@ export class LoginPage extends BasePage {
 
   /**
    * Бизнес-метод: Заполнение формы регистрации.
-   * @param data - объект с данными пользователя. 
+   * @param data - объект с данными пользователя.
    * По умолчанию использует VALID_USER из тестовых данных.
    */
   async fillRegisterForm(data: UserForRegistration = VALID_USER): Promise<void> {

@@ -33,18 +33,23 @@ export class BasePage {
 
   // ===== ЛЕВАЯ ПАНЕЛЬ (SIDEBAR) =====
   readonly sidebar: Locator;
-  
-  // Заголовки секций Sidebar
+
+  // Заголовки секций
   readonly cityRoutesHeader: Locator;
   readonly suburbanRoutesHeader: Locator;
   readonly intercityRoutesHeader: Locator;
   readonly nearbyStopsHeader: Locator;
 
-  // Списки и элементы Sidebar
+  // Секции (контейнеры)
+  readonly cityRoutesSection: Locator;
+  readonly suburbanRoutesSection: Locator;
+  readonly intercityRoutesSection: Locator;
+  readonly nearbyStopsSection: Locator;
+
+  // Плашки (кнопки) маршрутов по секциям
   readonly cityRouteBadges: Locator;
   readonly suburbanRouteBadges: Locator;
   readonly intercityRouteBadges: Locator;
-  readonly nearbyStopsList: Locator;
 
   // ===== ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ FLASH =====
   readonly flashSuccess: Locator;
@@ -58,7 +63,7 @@ export class BasePage {
     this.menuButton = page.getByTitle(/Открыть меню/i);
     this.routeButton = page.getByRole('button', { name: 'route' });
     this.toggleButton = page.locator('button.t-btn_toggle');
- 
+
     // ===== МЕНЮ =====
     this.sideMenu = page.locator('.menu');
     this.sideMenuHeader = this.sideMenu.locator('.menu__header');
@@ -84,29 +89,22 @@ export class BasePage {
     // ===== ЛЕВАЯ ПАНЕЛЬ (SIDEBAR) =====
     this.sidebar = page.locator('.sidebar');
 
-    // Заголовки секций Sidebar
+    // Заголовки
     this.cityRoutesHeader = this.sidebar.getByText('Городские маршруты', { exact: true });
     this.suburbanRoutesHeader = this.sidebar.getByText('Пригородные маршруты', { exact: true });
     this.intercityRoutesHeader = this.sidebar.getByText('Междугородние маршруты', { exact: true });
     this.nearbyStopsHeader = this.sidebar.getByText('Ближайшие остановочные пункты', { exact: true });
-    
-    // Списки и элементы Sidebar
-    this.cityRouteBadges = this.sidebar
-      .locator('.sidebar__section', { has: this.cityRoutesHeader })
-      .locator('.route-badge, .badge, button');
-      
-    this.suburbanRouteBadges = this.sidebar
-      .locator('.sidebar__section', { has: this.suburbanRoutesHeader })
-      .locator('.route-badge, .badge, button');
-      
-    this.intercityRouteBadges = this.sidebar
-      .locator('.sidebar__section', { has: this.intercityRoutesHeader })
-      .locator('.route-badge, .badge, button');
 
-    // Элементы списка ближайших остановок
-    this.nearbyStopsList = this.sidebar
-      .locator('.sidebar__section', { has: this.nearbyStopsHeader })
-      .locator('.stop-item, li, [class*="stop"]');
+    // Секции
+    this.cityRoutesSection = this.sidebar.locator('.sidebar__section', { has: this.cityRoutesHeader });
+    this.suburbanRoutesSection = this.sidebar.locator('.sidebar__section', { has: this.suburbanRoutesHeader });
+    this.intercityRoutesSection = this.sidebar.locator('.sidebar__section', { has: this.intercityRoutesHeader });
+    this.nearbyStopsSection = this.sidebar.locator('.sidebar__section', { has: this.nearbyStopsHeader });
+
+    // Иконки и плашки внутри секций
+    this.cityRouteBadges = this.cityRoutesSection.locator('button.badge');
+    this.suburbanRouteBadges = this.suburbanRoutesSection.locator('button.badge');
+    this.intercityRouteBadges = this.intercityRoutesSection.locator('button.badge');
 
     // ===== ВСПЛЫВАЮЩИЕ СООБЩЕНИЯ FLASH =====
     this.flashSuccess = page.locator('.flash.success');
@@ -119,9 +117,9 @@ export class BasePage {
    * Открыть панель маршрутов - await page.open('/routes');
    */
   async navigate(path: string = ''): Promise<void> {
-  const formattedPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
-  await this.page.goto(`/#${formattedPath}`);
-}
+    const formattedPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
+    await this.page.goto(`/#${formattedPath}`);
+  }
 
   /**
    * Возвращает текст из футера бокового меню
@@ -137,5 +135,13 @@ export class BasePage {
    */
   getMenuProfileButton(userName: string): Locator {
     return this.menuList.getByRole('button', { name: userName });
+  }
+
+  /**
+   * Ищет SVG-иконку внутри переданной секции по уникальному началу d-атрибута.
+   */
+  getTransportIconInSection(section: Locator, iconPath: string): Locator {
+    // Ищем тег path, у которого атрибут d начинается с переданной строки
+    return section.locator(`svg path[d^="${iconPath}"]`).first();
   }
 }

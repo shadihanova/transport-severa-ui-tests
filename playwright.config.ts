@@ -33,7 +33,7 @@ export default defineConfig({
       args: ['--start-maximized'],
       //  slowMo: 800,
     },
-    headless: false, // Показывать браузер при прогоне=false или нет=true
+    headless: true, // Показывать браузер при прогоне=false или нет=true
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
