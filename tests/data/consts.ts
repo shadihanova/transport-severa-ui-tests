@@ -1,6 +1,4 @@
-export const invalidEmails: string[] = [' ', 'test@ru', 'test.ru', 'test@.com'];
-export const invalidNames: string[] = ['Я', ' '];
-export const invalidPasswords: string[] = ['1234', '!@#.', ' '];
+import { generateRandomEmail } from './helpers';
 
 export interface UserForRegistration {
   name: string;
@@ -10,6 +8,12 @@ export interface UserForRegistration {
   passwordConfirm: string;
 }
 
+export const INVALID_REGISTRATION_DATA = {
+  emails: [' ', 'test@ru', 'test.ru', 'test@.com'],
+  names: ['Я', ' '],
+  passwords: ['1234', '!@#.', ' '],
+};
+
 export const VALID_USER: UserForRegistration = {
   name: 'Иван',
   surname: 'Тестович',
@@ -17,23 +21,3 @@ export const VALID_USER: UserForRegistration = {
   password: '12345',
   passwordConfirm: '12345',
 };
-
-// Вспомогательная функция: генерирует случайную строку из маленьких букв
-function getRandomString(length: number): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyz';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-// Главная функция: собирает email по маске
-export function generateRandomEmail(): string {
-  const timestamp = Date.now();
-  const username = getRandomString(4); // например: "qxkirty"
-  const domain = getRandomString(3); // например: "mnbvc"
-  const tld = getRandomString(2); // например: "com" или "ru" (рандомные буквы)
-
-  return `${timestamp}_${username}@${domain}.${tld}`;
-}
