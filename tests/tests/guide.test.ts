@@ -12,7 +12,7 @@ test.describe('Гид по порталу', () => {
 
   // --- ФАЗА 1: СЛАЙДЕР ---
 
-  test('1. Открытие гида, проверка заголовка и состава слайдера [TESTY-1250]', { tag: ['@no-auth'] }, async () => {
+  test('1. Открытие гида, проверка заголовка и состава слайдера [TESTY-1168]', { tag: ['@no-auth'] }, async () => {
     await test.step('Проверить видимость панели Гида и заголовка', async () => {
       await expect(guidePage.guideSidebar).toBeVisible();
       await expect(guidePage.guideTitle).toBeVisible();
@@ -31,7 +31,7 @@ test.describe('Гид по порталу', () => {
     });
   });
 
-  test('2. Листание слайдов, проверка счетчика и состояний кнопок [TESTY-1251]', { tag: ['@no-auth'] }, async () => {
+  test('2. Листание слайдов, проверка счетчика и состояний кнопок [TESTY-1169]', { tag: ['@no-auth'] }, async () => {
     const slidesData = GUIDE_EXPECTED_DATA.slides;
 
     // Проверка первого слайда
@@ -61,7 +61,7 @@ test.describe('Гид по порталу', () => {
     });
   });
 
-  test('3. Переход в раздел FAQ по кнопке "Подробнее" [TESTY-1252]', { tag: ['@no-auth'] }, async () => {
+  test('3. Переход в раздел FAQ по кнопке "Подробнее" [TESTY-1170]', { tag: ['@no-auth'] }, async () => {
     await test.step('Нажать кнопку "Подробнее"', async () => {
       await guidePage.detailsButton.click();
     });
@@ -83,7 +83,7 @@ test.describe('Гид по порталу', () => {
 
   // --- ФАЗА 2: FAQ И ОТВЕТЫ ---
 
-  test('4. Навигация по вопросам и проверка активного класса [TESTY-1253]', { tag: ['@no-auth'] }, async () => {
+  test('4. Навигация по вопросам и проверка активного класса [TESTY-1171]', { tag: ['@no-auth'] }, async () => {
     // Переходим в режим FAQ
     await guidePage.detailsButton.click();
     await expect(guidePage.faqNav).toBeVisible();
@@ -125,7 +125,7 @@ test.describe('Гид по порталу', () => {
     });
   });
 
-  test('5. Закрытие панели Гида по крестику [TESTY-1254]', { tag: ['@no-auth'] }, async () => {
+  test('5. Закрытие панели Гида по крестику [TESTY-1172]', { tag: ['@no-auth'] }, async () => {
     await test.step('Шаг 1. Нажать на крестик в слайдере -> Открывается панель с вопросами (FAQ)', async () => {
       await guidePage.closeGuideButton.click();
       await expect(guidePage.slides.first()).toBeHidden();
@@ -138,10 +138,11 @@ test.describe('Гид по порталу', () => {
     });
   });
 
-  test('6. Обратная навигация по слайдам (кнопка Назад) [TESTY-1255]', { tag: ['@no-auth'] }, async () => {
+  test('6. Обратная навигация по слайдам (кнопка Назад) [TESTY-1173]', { tag: ['@no-auth'] }, async () => {
     await test.step('Перелистать слайды вперед до 3-го слайда', async () => {
       await guidePage.nextSlideButton.click(); // 2-й слайд
       await guidePage.nextSlideButton.click(); // 3-й слайд
+      await expect(guidePage.activeSlide).toHaveCount(1);
       await expect(guidePage.activeSlide.locator('.slide__title')).toContainText(GUIDE_EXPECTED_DATA.slides[2]);
     });
 

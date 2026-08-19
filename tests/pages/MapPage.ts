@@ -13,7 +13,7 @@ export class MapPage extends BasePage {
   // Чекбоксы слоев
   readonly accessibleCheckbox: Locator;
   readonly stopsCheckbox: Locator;
-  readonly closuresCheckbox: Locator;
+  readonly closuresCheckbox: Locator; 
   readonly roadsCheckbox: Locator;
 
   constructor(page: Page) {

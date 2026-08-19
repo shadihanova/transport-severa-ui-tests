@@ -22,7 +22,6 @@ export const VALID_USER: UserForRegistration = {
   passwordConfirm: '12345',
 };
 
-// Цвета для разных типов транспортных средств
 export const TRANSPORT_COLORS = {
   bus: 'rgb(13, 179, 151)', // Зеленый (Автобусы)
   marshrutki: 'rgb(64, 117, 255)', // Синий (Маршрутки)

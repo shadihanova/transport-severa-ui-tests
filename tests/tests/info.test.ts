@@ -10,7 +10,7 @@ test.describe('Раздел Справка', () => {
     await infoPage.goto();
   });
 
-  test('1. Открытие раздела и проверка контента [TESTY-1260]', { tag: ['@no-auth'] }, async () => {
+  test('1. Открытие раздела и проверка контента [TESTY-1174]', { tag: ['@no-auth'] }, async () => {
     await test.step('Проверить видимость панели и заголовка', async () => {
       // Используем локатор sidebar из BasePage
       await expect(infoPage.sidebar).toBeVisible();
@@ -36,7 +36,7 @@ test.describe('Раздел Справка', () => {
     });
   });
 
-  test('2. Закрытие панели Справки по крестику [TESTY-1261]', { tag: ['@no-auth'] }, async () => {
+  test('2. Закрытие панели Справки по крестику [TESTY-1175]', { tag: ['@no-auth'] }, async () => {
     await test.step('Нажать на крестик закрытия', async () => {
       await expect(infoPage.closeInfoButton).toBeVisible();
       await infoPage.closeInfoButton.click();

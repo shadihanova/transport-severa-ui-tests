@@ -185,16 +185,19 @@ test.describe('Авторизация и регистрация', () => {
         const state = await page.context().storageState();
         const newContext = await browser.newContext({ storageState: state });
         const newPage = await newContext.newPage();
-        const newLoginPage = new LoginPage(newPage);
 
-        await newLoginPage.open();
+        try {
+          const newLoginPage = new LoginPage(newPage);
 
-        await newLoginPage.menuButton.click();
-        const fullName = `${USERS.user1.name} ${USERS.user1.surname}`;
-        await expect(newLoginPage.getMenuProfileButton(fullName)).toBeVisible();
-        await expect(newLoginPage.menuLogoutButton).toBeVisible();
-
-        await newContext.close();
+          await newLoginPage.open();
+          await newLoginPage.menuButton.click();
+          const fullName = `${USERS.user1.name} ${USERS.user1.surname}`;
+          await expect(newLoginPage.getMenuProfileButton(fullName)).toBeVisible();
+          await expect(newLoginPage.menuLogoutButton).toBeVisible();
+        } finally {
+          // Этот код выполнится ВСЕГДА, даже если expect выше упадет
+          await newContext.close();
+        }
       });
     },
   );
