@@ -108,31 +108,39 @@ export class LoginPage extends BasePage {
     ];
   }
 
-  // ===== БИЗНЕС-ЛОГИКА СТРАНИЦЫ =====
-
   /**
    * Бизнес-метод: Выполнение авторизации.
    * @param email - почта пользователя
    * @param password - пароль (необязательный, если нужно проверить только ввод email)
    */
-  async login(email: string, password?: string): Promise<void> {
+  async login(email: string, pass: string): Promise<void> {
     await this.authEmailInput.fill(email);
-    if (password) {
-      await this.authPasswordInput.fill(password);
-    }
+    await this.authPasswordInput.fill(pass);
     await this.submitLoginButton.click();
   }
 
   /**
    * Бизнес-метод: Заполнение формы регистрации.
-   * @param data - объект с данными пользователя.
-   * По умолчанию использует VALID_USER из тестовых данных.
+   * @param user - объект с данными пользователя (по умолчанию VALID_USER).
    */
-  async fillRegisterForm(data: UserForRegistration = VALID_USER): Promise<void> {
-    await this.regNameInput.fill(data.name);
-    await this.regSurnameInput.fill(data.surname);
-    await this.regEmailInput.fill(data.email);
-    await this.regPasswordInput.fill(data.password);
-    await this.regPasswordConfirmInput.fill(data.passwordConfirm);
+  async fillRegisterForm(user: UserForRegistration = VALID_USER): Promise<void> {
+    await this.regNameInput.fill(user.name);
+    await this.regSurnameInput.fill(user.surname);
+    await this.regEmailInput.fill(user.email);
+    if (user.password) {
+      await this.regPasswordInput.fill(user.password);
+      await this.regPasswordConfirmInput.fill(user.password);
+    }
+  }
+
+  /** Открывает модалку логина через UI меню */
+  async openLoginModal(): Promise<void> {
+    await this.navigateViaMenu(this.menuAuthorizeButton);
+  }
+
+  /** Открывает модалку регистрации через модалку логина */
+  async openRegistrationModal(): Promise<void> {
+    await this.openLoginModal();
+    await this.makeAccountButton.click();
   }
 }

@@ -45,7 +45,7 @@ interface TestCase {
   steps?: TestStep[];
   expected?: string;
   expected_result?: string;
-  labels?: unknown; 
+  labels?: unknown;
   tags?: unknown;
   suite?: number | { id: number };
   suite_path?: string;
@@ -92,7 +92,7 @@ async function getSuiteMap(headers: Record<string, string>, projectId: string): 
     return new Map();
   }
 
-  const data = await res.json() as Suite[] | { results: Suite[] };
+  const data = (await res.json()) as Suite[] | { results: Suite[] };
   const suites: Suite[] = Array.isArray(data) ? data : data.results || [];
   const suiteMap = new Map<number, Suite>();
   suites.forEach((suite) => suiteMap.set(suite.id, suite));
@@ -109,14 +109,17 @@ function formatTestCaseToMarkdown(test: TestCase): string {
 
   const rawLabels = test.labels || test.tags;
   let labelsList: string[] = [];
-  
+
   if (Array.isArray(rawLabels)) {
     labelsList = rawLabels.map((l) => {
       if (typeof l === 'object' && l !== null && 'name' in l) return String((l as { name: string }).name);
       return String(l);
     });
   } else if (typeof rawLabels === 'string' && rawLabels.trim()) {
-    labelsList = rawLabels.split(',').map((l) => l.trim()).filter(Boolean);
+    labelsList = rawLabels
+      .split(',')
+      .map((l) => l.trim())
+      .filter(Boolean);
   }
 
   if (labelsList.length > 0) {
@@ -138,20 +141,30 @@ function formatTestCaseToMarkdown(test: TestCase): string {
   const parsedSteps: Array<{ action: string; expected?: string }> = [];
 
   if (typeof test.scenario === 'string' && test.scenario.trim()) {
-    const scenarioLines = test.scenario.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+    const scenarioLines = test.scenario
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+
     scenarioLines.forEach((line) => {
-      const parts = line.split(/\s*->\s*|\s*=>\s*/);
-      if (parts.length >= 3) {
-        parsedSteps.push({ action: parts[1].trim(), expected: parts.slice(2).join(' -> ').trim() });
-      } else if (parts.length === 2) {
-        if (/^шаг\s*\d+/i.test(parts[0])) {
-          parsedSteps.push({ action: parts[1].trim() });
-        } else {
-          parsedSteps.push({ action: parts[0].trim(), expected: parts[1].trim() });
-        }
+      // 1. Отрезаем "Шаг N.", "Шаг N:", "**Шаг 1.**" и любые вариации со звездочками
+      const stepRegex = /^\**\s*(?:шаг\s*)?\d+\s*(?:\.|:|-)?\s*\**\s*(?:->|=>)?\s*/i;
+      const cleanLine = line.replace(stepRegex, '').trim();
+      if (!cleanLine) return;
+
+      // 2. Разбиваем оставшуюся строку по стрелкам ->
+      const parts = cleanLine
+        .split(/\s*(?:->|=>)\s*/)
+        .map((p) => p.trim())
+        .filter(Boolean);
+
+      if (parts.length >= 2) {
+        parsedSteps.push({
+          action: parts[0],
+          expected: parts.slice(1).join(' -> ').trim(),
+        });
       } else if (parts.length === 1) {
-        const cleanLine = line.replace(/^шаг\s*\d+\s*(?:->|=>|:|\.)?\s*/i, '').trim();
-        if (cleanLine) parsedSteps.push({ action: cleanLine });
+        parsedSteps.push({ action: parts[0] });
       }
     });
   } else if (Array.isArray(test.steps) && test.steps.length > 0) {
@@ -189,7 +202,6 @@ async function syncTests() {
   try {
     const headers = await getAuthHeaders();
     const baseUrl = API_URL.replace(/\/$/, '');
-    // Изменено значение по умолчанию на '2'
     const projectId = values.project || '2';
 
     console.log(`🔄 Загрузка списка сьютов...`);
@@ -201,7 +213,7 @@ async function syncTests() {
       console.log(`🔄 Загрузка тест-кейса ID: ${values.case}...`);
       const res = await fetch(`${baseUrl}/cases/${values.case}/`, { headers });
       if (!res.ok) throw new Error(`Ошибка API: ${res.status} ${res.statusText}`);
-      rawTestCases = [await res.json() as TestCase];
+      rawTestCases = [(await res.json()) as TestCase];
     } else {
       let url = `${baseUrl}/cases/?project=${projectId}&page_size=500`;
       if (values.suite) {
@@ -213,7 +225,7 @@ async function syncTests() {
 
       const res = await fetch(url, { headers });
       if (!res.ok) throw new Error(`Ошибка API: ${res.status} ${res.statusText}`);
-      const data = await res.json() as TestCase[] | { results: TestCase[] };
+      const data = (await res.json()) as TestCase[] | { results: TestCase[] };
       rawTestCases = Array.isArray(data) ? data : data.results || [];
     }
 
@@ -221,10 +233,11 @@ async function syncTests() {
 
     for (const item of rawTestCases) {
       let test = item;
+      // Фича 4: Дозапрос деталей. Если качаем массово, идем за деталями.
       if (!values.case && item.id) {
         const detailRes = await fetch(`${baseUrl}/cases/${item.id}/`, { headers });
         if (detailRes.ok) {
-          test = await detailRes.json() as TestCase;
+          test = (await detailRes.json()) as TestCase;
         }
       }
 
@@ -238,6 +251,7 @@ async function syncTests() {
       console.log(`✅ Подготовлен тест-кейс: TESTY-${test.id}`);
     }
 
+    // Запись файлов по сьютам
     for (const [suiteId, cases] of casesBySuite.entries()) {
       const suite = suiteMap.get(suiteId);
       const rawPath = suite ? suite.suite_path || suite.path || suite.name : `suite-${suiteId}`;
@@ -246,6 +260,7 @@ async function syncTests() {
 
       await fs.mkdir(targetDir, { recursive: true });
 
+      // Фича 6: Создание README.md
       if (suite?.description?.trim()) {
         const readmeContent = [
           '---',
@@ -265,10 +280,12 @@ async function syncTests() {
         console.log(`📄 README.md -> ${path.relative(process.cwd(), readmePath)}`);
       }
 
-      const mdContent = cases.map(formatTestCaseToMarkdown).join('\n---\n\n');
+      // Фича 7: Генерация TEST-CASES.md (с сортировкой по ID)
+      const sortedCases = [...cases].sort((a, b) => (a.id || 0) - (b.id || 0));
+      const mdContent = sortedCases.map(formatTestCaseToMarkdown).join('\n---\n\n');
       const casesFilePath = path.join(targetDir, 'TEST-CASES.md');
       await fs.writeFile(casesFilePath, mdContent, 'utf-8');
-      console.log(`📄 TEST-CASES.md -> ${path.relative(process.cwd(), casesFilePath)} (${cases.length} шт.)`);
+      console.log(`📄 TEST-CASES.md -> ${path.relative(process.cwd(), casesFilePath)} (${sortedCases.length} шт.)`);
     }
 
     console.log(`\n🎉 Успешно обработано тест-кейсов: ${rawTestCases.length}`);

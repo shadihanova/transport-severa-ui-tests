@@ -1,18 +1,9 @@
-import { test, expect } from '@playwright/test';
-import { InfoPage } from '../pages';
-import { INFO_EXPECTED_DATA } from '../data/consts';
+import { test, expect } from '../fixtures';
+import { INFO_EXPECTED_DATA } from '@data/consts';
 
-test.describe('Раздел Справка', () => {
-  let infoPage: InfoPage;
-
-  test.beforeEach(async ({ page }) => {
-    infoPage = new InfoPage(page);
-    await infoPage.goto();
-  });
-
-  test('1. Открытие раздела и проверка контента [TESTY-1174]', { tag: ['@no-auth'] }, async () => {
+test.describe('Раздел Справка', { tag: '@no-auth' }, () => {
+  test('1. Открытие раздела и проверка контента [TESTY-1174]', async ({ infoPage }) => {
     await test.step('Проверить видимость панели и заголовка', async () => {
-      // Используем локатор sidebar из BasePage
       await expect(infoPage.sidebar).toBeVisible();
       await expect(infoPage.infoTitle).toBeVisible();
       await expect(infoPage.infoTitle).toContainText(INFO_EXPECTED_DATA.title);
@@ -20,14 +11,10 @@ test.describe('Раздел Справка', () => {
 
     await test.step('Проверить наличие текста справки по ключевым фразам', async () => {
       await expect(infoPage.infoBody).toBeVisible();
-
-      // Проверяем копирайт в футере/шапке
       await expect(infoPage.infoBody).toContainText(INFO_EXPECTED_DATA.copyright);
 
-      // Проходимся по всем ключевым фразам
-      for (const snippet of INFO_EXPECTED_DATA.textSnippets) {
-        await expect(infoPage.infoBody).toContainText(snippet);
-      }
+      const textPattern = new RegExp(INFO_EXPECTED_DATA.textSnippets.join('.*'), 's');
+      await expect(infoPage.infoBody).toHaveText(textPattern);
     });
 
     await test.step('Проверить наличие корректной ссылки на Трансфлоу', async () => {
@@ -36,7 +23,7 @@ test.describe('Раздел Справка', () => {
     });
   });
 
-  test('2. Закрытие панели Справки по крестику [TESTY-1175]', { tag: ['@no-auth'] }, async () => {
+  test('2. Закрытие панели Справки по крестику [TESTY-1175]', async ({ infoPage }) => {
     await test.step('Нажать на крестик закрытия', async () => {
       await expect(infoPage.closeInfoButton).toBeVisible();
       await infoPage.closeInfoButton.click();

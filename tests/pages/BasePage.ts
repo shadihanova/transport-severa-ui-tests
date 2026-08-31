@@ -121,6 +121,22 @@ export class BasePage {
     await this.page.goto(`/#${formattedPath}`);
   }
 
+  /** Открытие бокового меню */
+  async openMenu(): Promise<void> {
+    await this.menuButton.click();
+  }
+
+  /** Закрытие бокового меню */
+  async closeMenu(): Promise<void> {
+    await this.closeMenuBtn.click();
+  }
+
+  /** Пользовательский переход через UI меню */
+  async navigateViaMenu(target: Locator): Promise<void> {
+    await this.openMenu();
+    await target.click();
+  }
+
   /**
    * Возвращает текст из футера бокового меню
    */
@@ -138,10 +154,13 @@ export class BasePage {
   }
 
   /**
-   * Ищет SVG-иконку внутри переданной секции по уникальному началу d-атрибута.
+   * Возвращает локатор иконки (или контейнера с иконкой) группы транспорта по номеру маршрута
    */
-  getTransportIconInSection(section: Locator, iconPath: string): Locator {
-    // Ищем тег path, у которого атрибут d начинается с переданной строки
-    return section.locator(`svg path[d^="${iconPath}"]`).first();
+  getTransportGroupIcon(routeNumber: string): Locator {
+    return this.sidebar
+      .getByRole('listitem')
+      .filter({ has: this.page.getByRole('button', { name: routeNumber, exact: true }) })
+      .locator('img, svg, [class*="icon"]')
+      .first();
   }
 }

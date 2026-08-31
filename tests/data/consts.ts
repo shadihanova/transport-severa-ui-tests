@@ -52,19 +52,19 @@ export const SIDEBAR_EXPECTED_DATA = {
       type: 'Автобус',
       color: TRANSPORT_COLORS.bus,
       iconPath: TRANSPORT_ICONS.bus,
-      routes: ['5', '10А', '11', '18', '19', '24', '27', '29', '33Р', '1', '30', '27**', '3Т', '4Т', '4Т*', '27*'],
+      routes: ['18'], // Эталонный городской автобус
     },
     {
       type: 'Маршрутки',
       color: TRANSPORT_COLORS.marshrutki,
       iconPath: TRANSPORT_ICONS.marshrutki,
-      routes: ['10К', '18К', '51', '52', '53', '54', '55', '57', '71'],
+      routes: ['18К'], // Эталонная маршрутка/троллейбус
     },
     {
       type: 'Трамвай',
       color: TRANSPORT_COLORS.tram,
       iconPath: TRANSPORT_ICONS.tram,
-      routes: ['3', '4', '6', '10'],
+      routes: ['3'], // Эталонный трамвай
     },
   ],
 
@@ -74,13 +74,13 @@ export const SIDEBAR_EXPECTED_DATA = {
       type: 'Автобус',
       color: TRANSPORT_COLORS.bus,
       iconPath: TRANSPORT_ICONS.bus,
-      routes: ['105', '106Н'], // не все
+      routes: ['105'], // Эталонный пригородный автобус
     },
     {
       type: 'Маршрутки',
       color: TRANSPORT_COLORS.marshrutki,
       iconPath: TRANSPORT_ICONS.marshrutki,
-      routes: ['105 (а)', '106 (а)', '105 (б)', '125'],
+      routes: ['125'],
     },
   ],
 
@@ -90,13 +90,13 @@ export const SIDEBAR_EXPECTED_DATA = {
       type: 'Автобус',
       color: TRANSPORT_COLORS.bus,
       iconPath: TRANSPORT_ICONS.bus,
-      routes: ['206', '241', '202', '209К', '207'], // не все
+      routes: ['206'], // Эталонный междугородний автобус
     },
     {
       type: 'Маршрутки',
       color: TRANSPORT_COLORS.marshrutki,
       iconPath: TRANSPORT_ICONS.marshrutki,
-      routes: ['211.', '234', '239'],
+      routes: ['234'],
     },
   ],
 

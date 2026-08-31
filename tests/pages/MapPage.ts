@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class MapPage extends BasePage {
@@ -13,7 +13,7 @@ export class MapPage extends BasePage {
   // Чекбоксы слоев
   readonly accessibleCheckbox: Locator;
   readonly stopsCheckbox: Locator;
-  readonly closuresCheckbox: Locator; 
+  readonly closuresCheckbox: Locator;
   readonly roadsCheckbox: Locator;
 
   constructor(page: Page) {
@@ -39,5 +39,19 @@ export class MapPage extends BasePage {
    */
   async goto(): Promise<void> {
     await this.navigate('');
+  }
+
+  /** Гарантированное сворачивание панели */
+  async collapseSidebar(): Promise<void> {
+    await this.toggleButton.click();
+    await expect(this.sidebar).toBeHidden();
+    await expect(this.toggleButton).not.toHaveClass(/active/);
+  }
+
+  /** Гарантированное разворачивание панели */
+  async expandSidebar(): Promise<void> {
+    await this.toggleButton.click();
+    await expect(this.sidebar).toBeVisible();
+    await expect(this.toggleButton).toHaveClass(/active/);
   }
 }
